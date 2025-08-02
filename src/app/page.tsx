@@ -4,8 +4,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/general/components/ui/tabs";
-import CreateAccount from "@/general/auth/create-account";
-import Login from "@/general/auth/login";
+import CreateAccount from "@/general/components/auth/create-account";
+import Login from "@/general/components/auth/login";
 
 export default function Home() {
   return (

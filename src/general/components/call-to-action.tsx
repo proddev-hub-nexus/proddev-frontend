@@ -1,4 +1,4 @@
-import { Button } from "@/shared/components/ui/button";
+import { Button } from "@/general/components/ui/button";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 

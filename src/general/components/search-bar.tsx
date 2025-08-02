@@ -1,6 +1,6 @@
 "use client";
-import { Button } from "@/shared/components/ui/button";
-import { Input } from "@/shared/components/ui/input";
+import { Button } from "@/general/components/ui/button";
+import { Input } from "@/general/components/ui/input";
 import { Search, BookOpen, Clock, Star, Users, X, Loader2 } from "lucide-react";
 import {
   Select,
@@ -10,10 +10,10 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/shared/components/ui/select";
+} from "@/general/components/ui/select";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useCourseStore } from "@/app/(courses)/store/useCourseStore";
-import { useCourseActions } from "@/app/(courses)/hooks/useCourseActions";
+import { useCourseStore } from "@/app/(course)/store/useCourseStore";
+import { useCourseActions } from "@/app/(course)/hooks/useCourseActions";
 import { useRouter } from "next/navigation";
 
 const SearchBar = () => {

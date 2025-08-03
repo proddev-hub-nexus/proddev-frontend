@@ -31,7 +31,6 @@ export function useApiMutation<TData = unknown, TVariables = unknown>(
   const queryClient = useQueryClient();
 
   return useMutation<TData, unknown, TVariables>({
-    // variables = payload sent to the API
     mutationFn: async (variables: TVariables) => {
       try {
         const response = await axios.request<TData>({
@@ -42,27 +41,24 @@ export function useApiMutation<TData = unknown, TVariables = unknown>(
         });
         return response.data;
       } catch (error) {
-        // Enhanced error handling
         if (axios.isAxiosError(error)) {
-          throw new Error(
-            error.response?.data?.message ||
-              error.message ||
-              `${method} request failed`
-          );
+          const apiMessage =
+            error.response?.data?.detail || // FastAPI standard error
+            error.response?.data?.message || // other APIs
+            error.message;
+
+          throw new Error(apiMessage || `${method} request failed`);
         }
         throw error;
       }
     },
     onSuccess: (data) => {
-      // Invalidate cache keys
       if (options?.invalidateKeys) {
         options.invalidateKeys.forEach((key) => {
-          // Handle both string and array query keys
           const queryKey = Array.isArray(key) ? key : [key];
           queryClient.invalidateQueries({ queryKey });
         });
       }
-      // Pass the response data to the success callback
       options?.onSuccess?.(data);
     },
     onError: (error) => {

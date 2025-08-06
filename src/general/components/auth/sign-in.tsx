@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useAuthStore } from "../../store/auth-store";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import axios from "axios";
@@ -18,7 +18,7 @@ import {
   FormMessage,
 } from "@/general/components/ui/form";
 import { Input } from "@/general/components/ui/input";
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft } from "lucide-react";
 
 const signInSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -28,20 +28,32 @@ const signInSchema = z.object({
 export function SignInForm() {
   const { setAuth } = useAuthStore();
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Check if we're in the onboarding flow
+  const isOnboarding = pathname?.startsWith("/onboarding");
 
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: { email: "", password: "" },
   });
 
+  const handleBack = () => {
+    if (isOnboarding) {
+      router.push("/onboarding");
+    } else {
+      router.back();
+    }
+  };
+
   async function onSubmit(values: z.infer<typeof signInSchema>) {
     try {
       setIsLoading(true);
 
-      // Call the Next.js API route instead of direct API call
+      // Call the Next.js API route
       const response = await axios.post("/api/login", {
         email: values.email,
         password: values.password,
@@ -61,10 +73,8 @@ export function SignInForm() {
         token_expires_in: new Date(loginData.token_expires_in),
       };
 
-      // No need to set client-side cookie since it's handled server-side
-      // The API route already sets the httpOnly cookie
       setAuth(auth);
-      toast.success("Login successful!");
+      toast.success(isOnboarding ? "Welcome back!" : "Login successful!");
 
       const redirectTo = searchParams?.get("redirect") || "/dashboard";
       router.push(redirectTo);
@@ -148,30 +158,91 @@ export function SignInForm() {
           )}
         />
 
-        {/* Submit */}
-        <Button
-          type="submit"
-          disabled={isLoading}
-          className="w-full h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isLoading ? (
-            <div className="flex items-center justify-center">
-              <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-              Signing in...
-            </div>
-          ) : (
-            <div className="flex items-center justify-center">
-              Sign In
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </div>
-          )}
-        </Button>
+        {/* Forgot Password Link */}
+        {!isOnboarding && (
+          <div className="text-right">
+            <button
+              type="button"
+              onClick={() => router.push("/forgot-password")}
+              className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+            >
+              Forgot your password?
+            </button>
+          </div>
+        )}
 
+        {/* Submit Button - Different layouts for onboarding vs regular */}
+        {isOnboarding ? (
+          <div className="flex justify-between space-x-3 pt-2">
+            <Button
+              type="button"
+              onClick={handleBack}
+              variant="outline"
+              className="flex-1 h-11 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-slate-100 transition-all duration-200"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back
+            </Button>
+
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="flex-1 h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                  Signing in...
+                </div>
+              ) : (
+                <div className="flex items-center justify-center">
+                  Sign In
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </div>
+              )}
+            </Button>
+          </div>
+        ) : (
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="w-full h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                Signing in...
+              </div>
+            ) : (
+              <div className="flex items-center justify-center">
+                Sign In
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </div>
+            )}
+          </Button>
+        )}
+
+        {/* Footer Text */}
         <div className="text-center text-sm text-slate-300 mt-4">
-          Do not have an account?
-          <span className="text-blue-400 font-medium">
-            Click &quot;Sign Up&quot; above
-          </span>
+          {isOnboarding ? (
+            <>
+              New to ProdDev Hub?{" "}
+              <button
+                type="button"
+                onClick={() => router.push("/onboarding/register")}
+                className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+              >
+                Create an account
+              </button>
+            </>
+          ) : (
+            <>
+              Don&apos;t have an account?{" "}
+              <span className="text-blue-400 font-medium">
+                Click &quot;Sign Up&quot; above
+              </span>
+            </>
+          )}
         </div>
       </form>
     </Form>

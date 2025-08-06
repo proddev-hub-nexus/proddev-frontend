@@ -6,7 +6,7 @@ import { useAuthStore } from "@/general/store/auth-store";
 import axios from "axios";
 
 const PROTECTED_PATHS = ["/dashboard", "/profile", "/settings"];
-
+//protects route
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();

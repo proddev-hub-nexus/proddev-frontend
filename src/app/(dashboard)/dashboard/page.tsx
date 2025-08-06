@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useLogout } from "@/general/hooks/use-logout";
 import { useAuthStore } from "@/general/store/auth-store";
+import Link from "next/link";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -36,6 +37,12 @@ export default function Dashboard() {
             >
               Logout
             </button>
+            <Link
+              href={"/"}
+              className="bg-green-400 px-4 py-2 rounded-md hover:bg-destructive/80 transition text-white text-sm"
+            >
+              Home
+            </Link>
           </div>
         </div>
       </header>

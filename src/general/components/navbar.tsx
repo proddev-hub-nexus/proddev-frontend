@@ -102,12 +102,13 @@ export default function NavBar() {
 
                 {/* Mobile Dashboard Button */}
                 <div className="mt-auto p-6 border-t border-slate-700/50">
-                  <Button
+                  <Link
                     onClick={closeSheet}
-                    className="w-full bg-slate-700 hover:bg-slate-600 text-slate-100 hover:text-white px-6 py-3 rounded-lg font-medium shadow-sm hover:shadow-md transition-all duration-200 border border-slate-600 hover:border-slate-500"
+                    className="bg-slate-700 hover:bg-slate-600 text-slate-100 hover:text-white px-4 sm:px-6 py-2 rounded-lg font-medium shadow-sm hover:shadow-md transition-all duration-200 border border-slate-600 hover:border-slate-500"
+                    href={"/dashboard"}
                   >
                     Dashboard
-                  </Button>
+                  </Link>
                 </div>
               </div>
             </SheetContent>

@@ -93,19 +93,21 @@ export function SignInForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email Address</FormLabel>
+              <FormLabel className="text-sm font-medium text-slate-200">
+                Email Address
+              </FormLabel>
               <FormControl>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <Input
                     type="email"
                     placeholder="Enter your email"
-                    className="pl-10"
+                    className="pl-10 h-11 bg-slate-700/50 border-slate-600 text-slate-100 placeholder-slate-400 focus:bg-slate-700 focus:border-blue-500 focus:ring-blue-500/20"
                     {...field}
                   />
                 </div>
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-xs text-red-400" />
             </FormItem>
           )}
         />
@@ -116,20 +118,22 @@ export function SignInForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel className="text-sm font-medium text-slate-200">
+                Password
+              </FormLabel>
               <FormControl>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    className="pl-10 pr-10"
+                    className="pl-10 pr-10 h-11 bg-slate-700/50 border-slate-600 text-slate-100 placeholder-slate-400 focus:bg-slate-700 focus:border-blue-500 focus:ring-blue-500/20"
                     {...field}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-300 transition-colors"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -139,13 +143,17 @@ export function SignInForm() {
                   </button>
                 </div>
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-xs text-red-400" />
             </FormItem>
           )}
         />
 
         {/* Submit */}
-        <Button type="submit" disabled={isLoading} className="w-full">
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className="w-full h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           {isLoading ? (
             <div className="flex items-center justify-center">
               <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
@@ -158,6 +166,13 @@ export function SignInForm() {
             </div>
           )}
         </Button>
+
+        <div className="text-center text-sm text-slate-300 mt-4">
+          Do not have an account?
+          <span className="text-blue-400 font-medium">
+            Click &quot;Sign Up&quot; above
+          </span>
+        </div>
       </form>
     </Form>
   );

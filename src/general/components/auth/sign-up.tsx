@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAuthActions } from "../../hooks/use-auth-actions";
-import { useAuthStore } from "../../store/auth-store";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -50,7 +49,7 @@ const signUpSchema = z
 
 export function SignUpForm() {
   const { register } = useAuthActions();
-  const { isLoading } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [step, setStep] = useState(1);
@@ -69,6 +68,7 @@ export function SignUpForm() {
 
   async function onSubmit(values: z.infer<typeof signUpSchema>) {
     try {
+      setIsLoading(true);
       const payload: RegisterPayload = {
         full_name: values.full_name,
         email: values.email,
@@ -94,6 +94,8 @@ export function SignUpForm() {
       } else {
         toast.error(message);
       }
+    } finally {
+      setIsLoading(false);
     }
   }
   return (

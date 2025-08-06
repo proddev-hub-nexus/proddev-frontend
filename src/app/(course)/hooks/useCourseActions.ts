@@ -6,7 +6,7 @@ import { Course } from "../types";
 import { useApiQuery } from "@/general/hooks/use-api-query";
 import { useApiMutation } from "@/general/hooks/use-api-mutations";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_BASE_URL = process.env.API_URL || "http://localhost:8000";
 
 // Types for API operations
 interface CreateCourseData {

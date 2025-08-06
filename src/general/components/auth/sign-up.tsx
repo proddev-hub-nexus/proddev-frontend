@@ -8,7 +8,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { RegisterPayload } from "@/general/types/auth-types";
 import { Button } from "@/general/components/ui/button";
 import {
   Form,
@@ -20,10 +20,11 @@ import {
 } from "@/general/components/ui/form";
 import { Input } from "@/general/components/ui/input";
 import { User, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { AxiosError } from "axios";
 
 const signUpSchema = z
   .object({
-    full_name: z // Fixed: changed fromfull_name tofull_name to match backend
+    full_name: z
       .string()
       .min(2, "Full name must be at least 2 characters")
       .max(50, "Full name must be less than 50 characters")
@@ -68,27 +69,33 @@ export function SignUpForm() {
 
   async function onSubmit(values: z.infer<typeof signUpSchema>) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { confirmPassword, termsAccepted, ...payload } = values;
-
+      const payload: RegisterPayload = {
+        full_name: values.full_name,
+        email: values.email,
+        password: values.password,
+      };
       await register(payload);
-
       toast.success(
         "Account created! Please check your email for verification."
       );
       form.reset();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      if (error.message?.includes("already registered")) {
+    } catch (error: unknown) {
+      const err = error as AxiosError<{ message?: string; detail?: string }>;
+      const message =
+        err.response?.data?.message ||
+        err.response?.data?.detail ||
+        err.message ||
+        "Registration failed. Please try again.";
+
+      if (message.includes("already registered")) {
         toast.error(
           "This email is already registered. Please sign in instead."
         );
       } else {
-        toast.error("Registration failed. Please try again.");
+        toast.error(message);
       }
     }
   }
-
   return (
     <Form {...form}>
       <form

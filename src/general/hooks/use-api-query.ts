@@ -1,42 +1,54 @@
-"use client";
-
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, QueryKey } from "@tanstack/react-query";
 import axios from "axios";
+import { getCookie } from "cookies-next/client";
 
 export function useApiQuery<TData = unknown>({
   url,
-  requiresAuth = false,
+  queryKey,
   enabled = true,
-  params = {},
-  initialData,
+  requiresAuth = false,
 }: {
   url: string;
-  requiresAuth?: boolean;
+  queryKey?: QueryKey;
   enabled?: boolean;
-  params?: Record<string, unknown>;
-  initialData?: TData;
+  requiresAuth?: boolean;
 }) {
-  if (!url) {
-    throw new Error("API URL is missing");
-  }
-
-  const fetchData = async (): Promise<TData> => {
-    const response = await axios.get<TData>(url, {
-      params,
-      withCredentials: requiresAuth,
-    });
-
-    if (response.status < 200 || response.status >= 300) {
-      throw new Error(`Request failed with status ${response.status}`);
-    }
-
-    return response.data;
-  };
-
   return useQuery<TData>({
-    queryKey: ["fetch", url, params, requiresAuth],
-    queryFn: fetchData,
-    initialData,
-    enabled: enabled && !!url,
+    queryKey: queryKey || [url],
+    enabled,
+    queryFn: async () => {
+      try {
+        const headers: Record<string, string> = {
+          "Content-Type": "application/json",
+        };
+
+        // 🔐 Add Bearer token from cookie if auth is required
+        if (requiresAuth) {
+          const access_token = getCookie("access_token");
+          if (access_token) {
+            headers.Authorization = `Bearer ${access_token}`;
+            console.log(`🔐 Adding Bearer token to request: ${url}`);
+          } else {
+            console.warn(`⚠️ Auth required but no token found for: ${url}`);
+          }
+        }
+
+        console.log(`📡 Making GET request to: ${url}`);
+        const response = await axios.get<TData>(url, { headers });
+        console.log(`✅ Request successful: ${url}`);
+
+        return response.data;
+      } catch (error) {
+        console.error(`❌ Request failed: ${url}`, error);
+        if (axios.isAxiosError(error)) {
+          throw new Error(
+            error.response?.data?.detail ||
+              error.response?.data?.message ||
+              error.message
+          );
+        }
+        throw error;
+      }
+    },
   });
 }

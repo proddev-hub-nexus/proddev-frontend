@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 import { ArrowUpRight, Code2, Calendar, UserPlus } from "lucide-react";
 import Image from "next/image";
+import ScheduleConsultationForm from "./schedule-consultation-form";
 
 const Hero: React.FC = () => {
   return (
@@ -69,21 +70,23 @@ const Hero: React.FC = () => {
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start pt-2">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="bg-slate-800/60 border-slate-600/50 text-slate-200 hover:bg-slate-700/70 hover:border-slate-500/60 hover:text-slate-100 rounded-lg px-6 py-3 font-medium transition-all duration-300 backdrop-blur-sm hover:scale-[1.02] order-2 sm:order-1"
-                >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  Schedule Consultation
-                </Button>
-                <Button
-                  size="lg"
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg px-6 py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-blue-500/20 order-1 sm:order-2"
+                <ScheduleConsultationForm>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="bg-slate-800/60 border-slate-600/50 text-slate-200 hover:bg-slate-700/70 hover:border-slate-500/60 hover:text-slate-100 rounded-lg px-6 py-3 font-medium transition-all duration-300 backdrop-blur-sm hover:scale-[1.02] order-2 sm:order-1"
+                  >
+                    <Calendar className="mr-2 h-4 w-4" />
+                    Schedule Consultation
+                  </Button>
+                </ScheduleConsultationForm>
+                <Link
+                  href={"/dashboard"}
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg px-6 py-3 font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-blue-500/20 order-1 sm:order-2 inline-flex items-center justify-center"
                 >
                   <UserPlus className="mr-2 h-4 w-4" />
                   Start Learning Now
-                </Button>
+                </Link>
               </div>
 
               {/* Trust indicators */}

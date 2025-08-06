@@ -1,6 +1,5 @@
 "use client";
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useVerifyEmailMutation } from "@/general/hooks/use-verify-email";
 import {
@@ -18,11 +17,10 @@ import { CheckCircle, XCircle, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
 
-export default function VerifyEmail() {
+function VerifyEmailContent() {
   const router = useRouter();
   const token = useSearchParams().get("token") || "";
   const verifyEmailMutation = useVerifyEmailMutation(token);
-
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading"
   );
@@ -38,7 +36,6 @@ export default function VerifyEmail() {
   const handleVerificationError = (error: unknown) => {
     console.error("Email verification error:", error);
     setStatus("error");
-
     if (axios.isAxiosError(error)) {
       const errorData = error.response?.data as ApiErrorResponse;
       setMessage(
@@ -49,7 +46,6 @@ export default function VerifyEmail() {
     } else {
       setMessage("An unexpected error occurred during verification.");
     }
-
     toast.error("Email verification failed");
   };
 
@@ -59,11 +55,11 @@ export default function VerifyEmail() {
       setMessage("Invalid verification link. Please check your email.");
       return;
     }
-
     verifyEmailMutation.mutate(undefined, {
       onSuccess: handleVerificationSuccess,
       onError: handleVerificationError,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   return (
@@ -110,5 +106,32 @@ export default function VerifyEmail() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+// Loading fallback component
+function VerifyEmailLoading() {
+  return (
+    <div className="h-screen flex items-center justify-center px-4">
+      <Card className="w-full max-w-md bg-slate-800 text-white">
+        <CardHeader className="text-center">
+          <div className="animate-spin h-6 w-6 mx-auto border-2 border-white border-t-transparent rounded-full mb-2" />
+          <CardTitle className="text-lg">Loading...</CardTitle>
+        </CardHeader>
+        <CardContent className="text-center">
+          <p className="text-sm text-gray-300">
+            Preparing email verification...
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+export default function VerifyEmail() {
+  return (
+    <Suspense fallback={<VerifyEmailLoading />}>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

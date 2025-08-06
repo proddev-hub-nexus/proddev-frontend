@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 import { User, ActiveToken } from "../types/auth-types";
 
 interface AuthState {
@@ -20,50 +19,41 @@ interface AuthState {
   get isLoggedIn(): boolean;
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set, get) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
+  user: null,
+  token_id: null,
+  access_token: null,
+  active_tokens: [],
+  _hasHydrated: false,
+
+  get isLoggedIn() {
+    return !!get().access_token;
+  },
+
+  setAuth: ({ token_id, access_token, device, token_expires_in }) =>
+    set((state) => ({
+      token_id,
+      access_token,
+      active_tokens: [
+        ...state.active_tokens,
+        {
+          token_id,
+          access_token,
+          expires_in: token_expires_in,
+          device,
+        },
+      ],
+    })),
+
+  setUser: (user) => set({ user }),
+
+  clearAuth: () =>
+    set({
       user: null,
       token_id: null,
       access_token: null,
       active_tokens: [],
-      _hasHydrated: false,
-
-      get isLoggedIn() {
-        const state = get();
-        return !!state.access_token;
-      },
-
-      setAuth: ({ token_id, access_token, device, token_expires_in }) =>
-        set((state) => ({
-          token_id,
-          access_token,
-          active_tokens: [
-            ...state.active_tokens,
-            {
-              token_id,
-              access_token,
-              expires_in: token_expires_in,
-              device,
-            },
-          ],
-        })),
-
-      setUser: (user) => set({ user }),
-      clearAuth: () =>
-        set({
-          user: null,
-          token_id: null,
-          access_token: null,
-          active_tokens: [],
-        }),
-      setHasHydrated: (value) => set({ _hasHydrated: value }),
     }),
-    {
-      name: "auth-storage",
-      onRehydrateStorage: () => (state) => {
-        state?.setHasHydrated(true);
-      },
-    }
-  )
-);
+
+  setHasHydrated: (value) => set({ _hasHydrated: value }),
+}));

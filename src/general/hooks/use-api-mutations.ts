@@ -26,7 +26,6 @@ export function useApiMutation<TData = unknown, TVariables = unknown>(
           const access_token = getCookie("access_token");
           if (access_token) {
             headers.Authorization = `Bearer ${access_token}`;
-            console.log(`🔐 Adding Bearer token to mutation: ${url}`);
           } else {
             console.warn(
               `⚠️ Auth required but no token found for mutation: ${url}`
@@ -43,7 +42,6 @@ export function useApiMutation<TData = unknown, TVariables = unknown>(
 
         if (options?.isLogout) {
           deleteCookie("access_token");
-          console.log("🧹 Deleted access_token cookie after logout");
         }
 
         return response.data;

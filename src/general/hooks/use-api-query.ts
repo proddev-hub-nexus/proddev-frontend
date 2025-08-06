@@ -27,15 +27,12 @@ export function useApiQuery<TData = unknown>({
           const access_token = getCookie("access_token");
           if (access_token) {
             headers.Authorization = `Bearer ${access_token}`;
-            console.log(`🔐 Adding Bearer token to request: ${url}`);
           } else {
             console.warn(`⚠️ Auth required but no token found for: ${url}`);
           }
         }
 
-        console.log(`📡 Making GET request to: ${url}`);
         const response = await axios.get<TData>(url, { headers });
-        console.log(`✅ Request successful: ${url}`);
 
         return response.data;
       } catch (error) {

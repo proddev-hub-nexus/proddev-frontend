@@ -5,12 +5,12 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
-  title: "Account - ProdDev Hub",
+  title: "Onboarding - ProdDev Hub",
   description:
     "Sign in to your account or create a new one to access professional development courses",
 };
 
-export default function AccountLayout({
+export default function OnboardingLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

@@ -18,8 +18,17 @@ import {
   FormMessage,
 } from "@/general/components/ui/form";
 import { Input } from "@/general/components/ui/input";
-import { User, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import {
+  User,
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  ArrowLeft,
+} from "lucide-react";
 import { AxiosError } from "axios";
+import { useRouter, usePathname } from "next/navigation";
 
 const signUpSchema = z
   .object({
@@ -49,10 +58,15 @@ const signUpSchema = z
 
 export function SignUpForm() {
   const { register } = useAuthActions();
+  const router = useRouter();
+  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [step, setStep] = useState(1);
+
+  // Check if we're in the onboarding flow
+  const isOnboarding = pathname?.startsWith("/onboarding");
 
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
@@ -65,6 +79,20 @@ export function SignUpForm() {
     },
     mode: "onChange",
   });
+
+  const handleBack = () => {
+    if (step === 1) {
+      // Go back to onboarding welcome or previous page
+      if (isOnboarding) {
+        router.push("/onboarding");
+      } else {
+        router.back();
+      }
+    } else {
+      // Go back to step 1
+      setStep(1);
+    }
+  };
 
   async function onSubmit(values: z.infer<typeof signUpSchema>) {
     try {
@@ -79,6 +107,7 @@ export function SignUpForm() {
         "Account created! Please check your email for verification."
       );
       form.reset();
+      setStep(1);
     } catch (error: unknown) {
       const err = error as AxiosError<{ message?: string; detail?: string }>;
       const message =
@@ -98,6 +127,7 @@ export function SignUpForm() {
       setIsLoading(false);
     }
   }
+
   return (
     <Form {...form}>
       <form
@@ -162,17 +192,43 @@ export function SignUpForm() {
                 )}
               />
 
-              <Button
-                type="button"
-                onClick={async () => {
-                  const valid = await form.trigger(["full_name", "email"]);
-                  if (valid) setStep(2);
-                }}
-                className="w-full h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
-              >
-                Next
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              {/* Step 1 Buttons */}
+              {isOnboarding ? (
+                <div className="flex justify-between space-x-3">
+                  <Button
+                    type="button"
+                    onClick={handleBack}
+                    variant="outline"
+                    className="flex-1 h-11 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-slate-100 transition-all duration-200"
+                  >
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={async () => {
+                      const valid = await form.trigger(["full_name", "email"]);
+                      if (valid) setStep(2);
+                    }}
+                    className="flex-1 h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    Next
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  type="button"
+                  onClick={async () => {
+                    const valid = await form.trigger(["full_name", "email"]);
+                    if (valid) setStep(2);
+                  }}
+                  className="w-full h-11 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  Next
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              )}
             </motion.div>
           )}
 
@@ -305,10 +361,11 @@ export function SignUpForm() {
               <div className="flex justify-between space-x-3">
                 <Button
                   type="button"
-                  onClick={() => setStep(1)}
+                  onClick={handleBack}
                   variant="outline"
                   className="flex-1 border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-slate-100"
                 >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
                   Back
                 </Button>
                 <Button
@@ -331,10 +388,25 @@ export function SignUpForm() {
         </AnimatePresence>
 
         <div className="text-center text-sm text-slate-300 mt-4">
-          Already have an account?{" "}
-          <span className="text-blue-400 font-medium">
-            Click &quot;Sign In&quot; above
-          </span>
+          {isOnboarding ? (
+            <>
+              Already have an account?{" "}
+              <button
+                type="button"
+                onClick={() => router.push("/onboarding/signin")}
+                className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+              >
+                Sign in
+              </button>
+            </>
+          ) : (
+            <>
+              Already have an account?{" "}
+              <span className="text-blue-400 font-medium">
+                Click &quot;Sign In&quot; above
+              </span>
+            </>
+          )}
         </div>
       </form>
     </Form>

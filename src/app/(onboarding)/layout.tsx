@@ -5,9 +5,8 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
-  title: "Onboarding - ProdDev Hub",
-  description:
-    "Sign in to your account or create a new one to access professional development courses",
+  title: "Onboarding - Come on board ProdDev Hub",
+  description: "Welcome to ProdDev Hub a Platform preparing for the future",
 };
 
 export default function OnboardingLayout({

@@ -7,7 +7,7 @@ import "@/app/globals.css";
 
 export const metadata: Metadata = {
   title: "Dashboard - ProdDev Hub",
-  description: "Dashboard for the application",
+  description: "Personal Course Dashboard",
 };
 
 export default function DashboardLayout({

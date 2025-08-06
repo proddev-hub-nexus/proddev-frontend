@@ -19,7 +19,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Courses - Proddev",
-  description: "Course pages for the application",
+  description:
+    "Courses crafted with the intention to bring you onboard the future",
 };
 
 export default function RootLayout({

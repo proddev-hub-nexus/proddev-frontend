@@ -3,14 +3,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useAuthActions } from "../../hooks/use-auth-actions";
 import { useAuthStore } from "../../store/auth-store";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import axios from "axios";
 import { Button } from "@/general/components/ui/button";
-import { setCookie } from "cookies-next/client";
 import {
   Form,
   FormControl,
@@ -28,7 +26,6 @@ const signInSchema = z.object({
 });
 
 export function SignInForm() {
-  const { loginMutation } = useAuthActions();
   const { setAuth } = useAuthStore();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -44,7 +41,14 @@ export function SignInForm() {
     try {
       setIsLoading(true);
 
-      const loginData = await loginMutation.mutateAsync(values);
+      // Call the Next.js API route instead of direct API call
+      const response = await axios.post("/api/login", {
+        email: values.email,
+        password: values.password,
+      });
+
+      const loginData = response.data.data;
+
       if (!loginData) {
         toast.error("Login failed. Please try again.");
         return;
@@ -57,14 +61,8 @@ export function SignInForm() {
         token_expires_in: new Date(loginData.token_expires_in),
       };
 
-      // 🔐 Secure cookie settings
-      setCookie("access_token", auth.access_token, {
-        expires: auth.token_expires_in,
-        path: "/",
-        secure: process.env.NODE_ENV === "production", // Only HTTPS in production
-        sameSite: "strict", // CSRF protection
-      });
-
+      // No need to set client-side cookie since it's handled server-side
+      // The API route already sets the httpOnly cookie
       setAuth(auth);
       toast.success("Login successful!");
 
@@ -74,7 +72,9 @@ export function SignInForm() {
       console.error("Login error:", error);
       if (axios.isAxiosError(error)) {
         const message =
-          error.response?.data?.detail || error.response?.data?.message;
+          error.response?.data?.detail ||
+          error.response?.data?.message ||
+          error.response?.data?.error;
         toast.error(message || "Login failed. Please try again.");
       } else {
         toast.error("Unexpected error. Please try again.");

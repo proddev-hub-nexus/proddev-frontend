@@ -1,19 +1,19 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { useAuthActions } from "@/general/hooks/use-auth-actions";
+import { useLogout } from "@/general/hooks/use-logout";
 import { useAuthStore } from "@/general/store/auth-store";
 
 export default function Dashboard() {
   const router = useRouter();
-  const { logout } = useAuthActions();
+  const { logout } = useLogout();
   const { user } = useAuthStore();
 
   const handleLogout = async () => {
     try {
       await logout();
       toast.success("You have been logged out.");
-      router.replace("/");
+      router.push("/");
     } catch (error) {
       toast.error("Failed to logout. Please try again.");
       console.error("Logout error:", error);
@@ -99,7 +99,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Verification Status Banner - though this shouldn't show since AuthProvider handles it */}
+          {/* Verification Status Banner */}
           {!user?.is_verified && (
             <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
               <div className="flex items-center gap-2">

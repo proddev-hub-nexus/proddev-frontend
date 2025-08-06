@@ -14,7 +14,7 @@ export async function POST() {
 
   try {
     // Call the backend logout endpoint
-    const res = await fetch(`${process.env.API_URL}/auth/logout`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

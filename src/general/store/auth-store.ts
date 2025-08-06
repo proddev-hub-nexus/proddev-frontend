@@ -1,59 +1,69 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { User, ActiveToken } from "../types/auth-types";
 
-interface IAuth {
-  user_id: string | null;
-  email: string;
-  full_name: string;
-  isVerified: boolean;
-  created_at: Date | null;
-  isLoading: boolean;
-  error: string | null;
-
-  isLoggedIn: () => boolean;
-
-  setUser: (payload: {
-    user_id: string;
-    email: string;
-    full_name: string;
-    isVerified: boolean;
-    created_at: Date;
+interface AuthState {
+  user: User | null;
+  token_id: string | null;
+  access_token: string | null;
+  active_tokens: ActiveToken[];
+  _hasHydrated: boolean;
+  setAuth: (payload: {
+    token_id: string;
+    access_token: string;
+    device: string;
+    token_expires_in: Date;
   }) => void;
-  clearUser: () => void;
-  setLoading: (val: boolean) => void;
-  setError: (err: string | null) => void;
+  clearAuth: () => void;
+  setUser: (user: User) => void;
+  setHasHydrated: (value: boolean) => void;
+  get isLoggedIn(): boolean;
 }
 
-export const useAuthStore = create<IAuth>((set, get) => ({
-  // State
-  user_id: null,
-  email: "",
-  full_name: "",
-  isVerified: false,
-  created_at: null,
-  isLoading: false,
-  error: null,
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set, get) => ({
+      user: null,
+      token_id: null,
+      access_token: null,
+      active_tokens: [],
+      _hasHydrated: false,
 
-  // Derived State
-  isLoggedIn: () => !!get().user_id && get().isVerified,
+      get isLoggedIn() {
+        const state = get();
+        return !!state.access_token;
+      },
 
-  // Actions
-  setUser: ({ user_id, email, full_name, isVerified, created_at }) =>
-    set({
-      user_id,
-      email,
-      full_name,
-      isVerified,
-      created_at,
-      error: null,
+      setAuth: ({ token_id, access_token, device, token_expires_in }) =>
+        set((state) => ({
+          token_id,
+          access_token,
+          active_tokens: [
+            ...state.active_tokens,
+            {
+              token_id,
+              access_token,
+              expires_in: token_expires_in,
+              device,
+            },
+          ],
+        })),
+
+      setUser: (user) => set({ user }),
+      clearAuth: () =>
+        set({
+          user: null,
+          token_id: null,
+          access_token: null,
+          active_tokens: [],
+        }),
+      setHasHydrated: (value) => set({ _hasHydrated: value }),
     }),
-  clearUser: () =>
-    set({
-      user_id: null,
-      email: "",
-      full_name: "",
-      isVerified: false,
-      created_at: null,
-    }),
-  setLoading: (val) => set({ isLoading: val }),
-  setError: (err) => set({ error: err }),
-}));
+    {
+      name: "auth-storage",
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
+    }
+  )
+);

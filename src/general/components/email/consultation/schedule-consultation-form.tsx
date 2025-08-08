@@ -135,13 +135,31 @@ const ScheduleConsultationForm: React.FC<ScheduleConsultationFormProps> = ({
     },
   });
 
+  // In your consultation form component, update the onSubmit function:
+
   const onSubmit = async (values: ConsultationFormData) => {
     setIsLoading(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Call the real API instead of simulation
+      const response = await fetch("/api/email/consultation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...values,
+          scheduledDateTime: `${values.preferredDate} ${values.preferredTime}`,
+        }),
+      });
 
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to schedule consultation");
+      }
+
+      // Get formatted date/time for success message
       const selectedDate = availableDates.find(
         (d) => d.value === values.preferredDate
       );
@@ -158,14 +176,16 @@ const ScheduleConsultationForm: React.FC<ScheduleConsultationFormProps> = ({
       form.reset();
       setIsOpen(false);
 
-      // Log the consultation request (replace with actual API call)
-      console.log("Consultation request:", {
-        ...values,
-        scheduledDateTime: `${values.preferredDate} ${values.preferredTime}`,
-      });
+      // Log success for debugging
+      console.log("Consultation scheduled successfully:", result.data);
     } catch (error) {
-      toast.error("Something went wrong. Please try again.");
       console.error("Error scheduling consultation:", error);
+
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }

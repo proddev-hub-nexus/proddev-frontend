@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 import { ArrowUpRight, Code2, Calendar, UserPlus } from "lucide-react";
 import Image from "next/image";
-import ScheduleConsultationForm from "./schedule-consultation-form";
+import ScheduleConsultationForm from "./email/consultation/schedule-consultation-form";
 
 const Hero: React.FC = () => {
   return (

@@ -50,45 +50,53 @@ export function SignInForm() {
   };
 
   async function onSubmit(values: z.infer<typeof signInSchema>) {
+    const id = toast.loading("Signing you in…", {
+      description: "Please wait",
+      duration: Infinity, // persistent until we update/dismiss
+    });
+
     try {
       setIsLoading(true);
 
-      // Call the Next.js API route
-      const response = await axios.post("/api/login", {
+      const { data } = await axios.post("/api/login", {
         email: values.email,
         password: values.password,
       });
 
-      const loginData = response.data.data;
+      const loginData = data?.data;
+      if (!loginData) throw new Error("Login failed. Please try again.");
 
-      if (!loginData) {
-        toast.error("Login failed. Please try again.");
-        return;
-      }
-
-      const auth = {
+      setAuth({
         token_id: loginData.token_id,
         access_token: loginData.access_token,
         device: loginData.device || "desktop",
         token_expires_in: new Date(loginData.token_expires_in),
-      };
+      });
 
-      setAuth(auth);
-      toast.success(isOnboarding ? "Welcome back!" : "Login successful!");
+      // IMPORTANT: you referenced selectedDate/selectedTime here earlier — remove that.
+      toast.success(isOnboarding ? "Welcome back!" : "Login successful!", {
+        id, // update the sticky one
+        duration: 8000, // now auto-dismiss in 6s (or keep Infinity if you want)
+        action: { label: "Dismiss", onClick: () => toast.dismiss(id) },
+      });
 
       const redirectTo = searchParams?.get("redirect") || "/dashboard";
       router.push(redirectTo);
-    } catch (error) {
-      console.error("Login error:", error);
-      if (axios.isAxiosError(error)) {
-        const message =
-          error.response?.data?.detail ||
-          error.response?.data?.message ||
-          error.response?.data?.error;
-        toast.error(message || "Login failed. Please try again.");
-      } else {
-        toast.error("Unexpected error. Please try again.");
-      }
+    } catch (err) {
+      const message = axios.isAxiosError(err)
+        ? err.response?.data?.detail ||
+          err.response?.data?.message ||
+          err.response?.data?.error
+        : "Unexpected error. Please try again.";
+
+      toast.error(message, {
+        id, // update the same toast
+        duration: 7000,
+        action: {
+          label: "Retry",
+          onClick: () => form.handleSubmit(onSubmit)(),
+        },
+      });
     } finally {
       setIsLoading(false);
     }

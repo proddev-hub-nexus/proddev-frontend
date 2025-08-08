@@ -95,20 +95,36 @@ export function SignUpForm() {
   };
 
   async function onSubmit(values: z.infer<typeof signUpSchema>) {
+    const id = toast.loading("Creating your account…", {
+      description: "Hang tight, this takes a few seconds.",
+      duration: Infinity, // persistent until we update/dismiss
+    });
+
     try {
       setIsLoading(true);
+
       const payload: RegisterPayload = {
         full_name: values.full_name,
         email: values.email,
         password: values.password,
       };
+
       await register(payload);
-      toast.success(
-        "Account created! Please check your email for verification."
-      );
+
+      toast.success("Account created!", {
+        id, // update the same toast
+        description: "Please check your email for verification.",
+        duration: Infinity, // keep it until user dismisses
+        closeButton: true,
+        action: {
+          label: "Open mail",
+          onClick: () => window.open("mailto:", "_blank"),
+        },
+      });
+
       form.reset();
       setStep(1);
-    } catch (error: unknown) {
+    } catch (error) {
       const err = error as AxiosError<{ message?: string; detail?: string }>;
       const message =
         err.response?.data?.message ||
@@ -116,13 +132,20 @@ export function SignUpForm() {
         err.message ||
         "Registration failed. Please try again.";
 
-      if (message.includes("already registered")) {
-        toast.error(
-          "This email is already registered. Please sign in instead."
-        );
-      } else {
-        toast.error(message);
-      }
+      toast.error(
+        message.includes("already registered")
+          ? "This email is already registered. Please sign in instead."
+          : message,
+        {
+          id, // update the same toast
+          duration: Infinity,
+          closeButton: true,
+          action: {
+            label: "Retry",
+            onClick: () => form.handleSubmit(onSubmit)(),
+          },
+        }
+      );
     } finally {
       setIsLoading(false);
     }

@@ -45,15 +45,25 @@ export default function AccountLayout({
 
           {/* Toast notifications matching dark theme */}
           <Toaster
+            position="top-right"
+            expand={true}
+            richColors={true}
+            closeButton={true}
             theme="dark"
-            className="dark"
+            duration={5000}
+            visibleToasts={5}
             toastOptions={{
               style: {
-                background: "rgba(51, 65, 85, 0.95)",
-                color: "rgb(248, 250, 252)",
-                border: "1px solid rgba(71, 85, 105, 0.5)",
-                backdropFilter: "blur(8px)",
+                background: "hsl(222.2 84% 4.9%)", // slate-950
+                color: "hsl(210 40% 98%)", // slate-50
+                border: "1px solid hsl(217.2 32.6% 17.5%)", // slate-800
+                fontSize: "14px",
+                borderRadius: "8px",
+                padding: "12px 16px",
+                boxShadow:
+                  "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
               },
+              className: "toast-custom",
             }}
           />
 

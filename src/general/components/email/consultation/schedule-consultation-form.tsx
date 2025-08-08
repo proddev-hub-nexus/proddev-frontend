@@ -167,11 +167,17 @@ const ScheduleConsultationForm: React.FC<ScheduleConsultationFormProps> = ({
         (t) => t.value === values.preferredTime
       );
 
-      toast.success(
-        `Consultation scheduled for ${selectedDate?.label} at ${
+      // Remove the alert() and use only toast
+      toast.success(`🎉 Consultation Scheduled Successfully!`, {
+        description: `${selectedDate?.label} at ${
           selectedTime?.label.split(" - ")[0]
-        }. Check your email for confirmation!`
-      );
+        }. Check your email for confirmation details.`,
+        duration: 6000,
+        action: {
+          label: "Got it",
+          onClick: () => console.log("Toast dismissed"),
+        },
+      });
 
       form.reset();
       setIsOpen(false);
@@ -182,9 +188,20 @@ const ScheduleConsultationForm: React.FC<ScheduleConsultationFormProps> = ({
       console.error("Error scheduling consultation:", error);
 
       if (error instanceof Error) {
-        toast.error(error.message);
+        toast.error("Scheduling Failed", {
+          description: error.message,
+          duration: 5000,
+          action: {
+            label: "Retry",
+            onClick: () => console.log("Retry clicked"),
+          },
+        });
       } else {
-        toast.error("Something went wrong. Please try again.");
+        toast.error("Something went wrong", {
+          description:
+            "Please try again or contact support if the problem persists.",
+          duration: 5000,
+        });
       }
     } finally {
       setIsLoading(false);

@@ -16,7 +16,7 @@ export default async function middleware(req: NextRequest) {
 
   // If user has no token and tries to access private routes, redirect to login
   if (!token && PRIVATE_ROUTES.some((path) => pathname.startsWith(path))) {
-    url.pathname = `/onboarding`;
+    url.pathname = `/account`;
     return NextResponse.redirect(url);
   }
 

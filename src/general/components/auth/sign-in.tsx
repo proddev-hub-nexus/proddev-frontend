@@ -19,6 +19,7 @@ import {
 } from "@/general/components/ui/form";
 import { Input } from "@/general/components/ui/input";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft } from "lucide-react";
+import Link from "next/link";
 
 const signInSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -247,7 +248,7 @@ export function SignInForm() {
             <>
               Don&apos;t have an account?{" "}
               <span className="text-blue-400 font-medium">
-                Click &quot;Sign Up&quot; above
+                <Link href="/onboarding">register</Link>
               </span>
             </>
           )}

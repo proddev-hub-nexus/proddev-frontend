@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // If profile fetch fails (401 = no/invalid token), redirect to login for protected routes
         if (axios.isAxiosError(err) && err.response?.status === 401) {
           if (isProtectedRoute) {
-            router.replace(`/account?redirect=${encodeURIComponent(pathname)}`);
+            router.replace(`/account`);
             return;
           }
         }

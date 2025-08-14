@@ -72,3 +72,40 @@ export type OnboardingStepPayload =
   | { step_name: "learning_goal"; step_data: LearningGoalInput } // <- both allowed
   | { step_name: "course_interest"; step_data: string[] } // <- up to 3 ids
   | { step_name: "completion"; step_data: LegalTerms };
+
+export interface StepProps {
+  onNext?: () => void;
+  onBack?: () => void;
+}
+
+export interface WelcomeStepProps extends StepProps {
+  data?: PersonalInfo;
+  setData?: (data: PersonalInfo) => void;
+}
+export interface PersonalInfoStepProps extends StepProps {
+  data?: PersonalInfo;
+  setData: (data: PersonalInfo) => void;
+}
+
+export interface LearningGoalStepProps extends StepProps {
+  data?: LearningGoalInput;
+  setData: (data: LearningGoalInput) => void;
+}
+
+export interface CourseInterestStepProps extends StepProps {
+  data: string[];
+  setData: (data: string[]) => void;
+}
+
+export interface CompletionStepProps {
+  data?: LegalTerms;
+  setData: (data: LegalTerms) => void;
+  onComplete: (password: string) => void;
+  onBack: () => void;
+  allData: {
+    personalInfo?: PersonalInfo;
+    learningGoal?: LearningGoalInput;
+    interestedCoursesId: string[];
+    legalTerms?: LegalTerms;
+  };
+}

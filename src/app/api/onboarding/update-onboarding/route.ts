@@ -17,7 +17,7 @@ export async function PATCH(req: Request) {
     }
 
     const upstream = await fetch(
-      `${process.env.API_URL}/onboarding/update-onboarding-data`,
+      `${process.env.NEXT_PUBLIC_API_URL}/onboarding/update-onboarding-data`,
       {
         method: "PATCH",
         headers: {

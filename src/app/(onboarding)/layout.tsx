@@ -16,7 +16,7 @@ export default function OnboardingLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
-      <body className="h-full bg-home-background text-white antialiased overflow-hidden">
+      <body className="h-full bg-home-background text-white antialiased">
         <QueryProvider>
           {/* Background matching your theme */}
           <div className="fixed inset-0 bg-hero-background">
@@ -38,8 +38,8 @@ export default function OnboardingLayout({
           </div>
 
           {/* Main content - no scrolling */}
-          <main className="relative z-10 h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-            <div className="w-full max-w-md">{children}</div>
+          <main className="relative z-10 h-screen min-w-screen">
+            {children}
           </main>
 
           {/* Toast notifications matching dark theme */}

@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 export async function POST() {
   try {
     const upstream = await fetch(
-      `${process.env.API_URL}/onboarding/session-begin`,
+      `${process.env.NEXT_PUBLIC_API_URL}/onboarding/session-begin`,
       { method: "POST" }
     );
 
@@ -16,7 +16,10 @@ export async function POST() {
 
     const { session_id } = await upstream.json();
 
-    const response = NextResponse.json({ success: true }, { status: 201 });
+    const response = NextResponse.json(
+      { success: true, session_id: session_id },
+      { status: 201 }
+    );
 
     // Set secure cookie with simplified options
     response.cookies.set("__Host-onboarding_session", session_id, {

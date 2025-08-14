@@ -6,10 +6,11 @@ import {
 
 const api = axios.create({
   baseURL: "/api",
-  timeout: 10000,
+  timeout: 30000,
 });
-
-type InitResult = { success: true } | { success: false; error: string };
+type InitResult =
+  | { success: true; session_id: string }
+  | { success: false; error: string };
 
 type UpdateOnboardingResponse = {
   current_step: OnboardingStep;
@@ -17,11 +18,18 @@ type UpdateOnboardingResponse = {
   has_completed_onboarding: boolean;
   updated_at: string;
 };
-
 export async function initOnboardingSession(): Promise<InitResult> {
   try {
-    await api.post("/onboarding/session-begin");
-    return { success: true };
+    const response = await api.post("/onboarding/session-begin");
+
+    // Extract session_id from the response
+    const { session_id } = response.data;
+
+    if (!session_id) {
+      return { success: false, error: "No session_id returned from server" };
+    }
+
+    return { success: true, session_id };
   } catch (error) {
     const message = axios.isAxiosError(error)
       ? error.response?.data?.detail || error.message

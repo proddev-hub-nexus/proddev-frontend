@@ -1,5 +1,8 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { enrollNow } from "../../util/course-api";
+
 import { useParams } from "next/navigation";
 import { useCourseStore } from "../../store/useCourseStore";
 import { useCourseActions, useCourseById } from "../../hooks/useCourseActions";
@@ -86,6 +89,7 @@ const CourseDetailSkeleton = () => (
 export default function CourseDetails() {
   const params = useParams();
   const courseId = params?.id as string;
+  const [enrolling, setEnrolling] = useState(false);
 
   // Use the course hooks
   const { fetchAllCourses } = useCourseActions();
@@ -193,6 +197,36 @@ export default function CourseDetails() {
   const courseStats = generateCourseStats(currentCourse._id);
   const relatedCourses = getRelatedCourses();
 
+  const handleEnroll = async () => {
+    try {
+      setEnrolling(true);
+      const res = await enrollNow(currentCourse._id);
+
+      toast.success("Enrollment created 🎉", {
+        description:
+          "We’ve sent a confirmation email. You can also chat with us on WhatsApp.",
+        action: {
+          label: "Open WhatsApp",
+          onClick: () => window.open(res.whatsapp_link, "_blank", "noopener"),
+        },
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      const status = err?.response?.status;
+      const detail = err?.response?.data?.detail;
+
+      if (status === 401) {
+        toast.error("Please sign in to enroll.");
+      } else if (status === 409) {
+        toast.info("You’re already enrolled for this course.");
+      } else {
+        toast.error(detail || "Enrollment failed. Please try again.");
+      }
+    } finally {
+      setEnrolling(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700">
       {/* Background decorative elements */}
@@ -283,13 +317,14 @@ export default function CourseDetails() {
                           One-time payment • Lifetime access
                         </p>
                       </div>
-
                       <Button
                         size="lg"
-                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl py-4 font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-blue-500/20"
+                        onClick={handleEnroll}
+                        disabled={enrolling}
+                        className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl py-4 font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-blue-500/20 disabled:opacity-60"
                       >
                         <PlayCircle className="w-5 h-5 mr-2" />
-                        Enroll Now
+                        {enrolling ? "Enrolling..." : "Enroll Now"}
                       </Button>
 
                       <div className="space-y-4 pt-4 border-t border-slate-600/30">

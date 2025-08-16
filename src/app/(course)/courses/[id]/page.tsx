@@ -137,7 +137,7 @@ export default function CourseDetails() {
   // Format price
   const formatPrice = (price: number | undefined) => {
     if (!price || price === 0) return "Free";
-    return `$${price.toFixed(2)}`;
+    return `₦${price.toFixed(2)}`;
   };
 
   // Get related courses (same category, different course)

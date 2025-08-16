@@ -78,7 +78,7 @@ export default function WelcomeStep() {
             </div>
 
             <h1 className="text-2xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-              Welcome to EduPlatform
+              Welcome to Proddev Hub Educational Platform
             </h1>
 
             <p className="text-base sm:text-xl text-slate-600 leading-relaxed max-w-xl mx-auto">

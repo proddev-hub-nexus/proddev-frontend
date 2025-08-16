@@ -259,30 +259,6 @@ export default function PersonalInfoStep() {
         <div className="max-w-md mx-auto">
           <div className="flex flex-col sm:flex-row gap-3 sm:justify-between sm:space-x-4">
             <button
-              type="button"
-              onClick={handleBack}
-              className="flex items-center justify-center px-4 sm:px-6 py-3 border border-slate-300 rounded-lg
-                         text-slate-700 font-medium hover:bg-slate-50 hover:border-slate-400
-                         transition-colors duration-200 focus:outline-none focus:ring-2 
-                         focus:ring-slate-500 focus:ring-offset-2 order-2 sm:order-1"
-            >
-              <svg
-                className="w-4 h-4 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              Back
-            </button>
-
-            <button
               onClick={form.handleSubmit(onSubmit)}
               disabled={loading || !form.formState.isValid}
               className="flex items-center justify-center px-4 sm:px-6 py-3 bg-slate-900 hover:bg-slate-800 

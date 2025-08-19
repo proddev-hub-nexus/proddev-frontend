@@ -115,7 +115,6 @@ export default function DashboardSettings() {
         label: "Confirm",
         onClick: () => toast.success("Request submitted (demo)"),
       },
-      cancel: { label: "Cancel" },
       duration: 8000,
     });
   }

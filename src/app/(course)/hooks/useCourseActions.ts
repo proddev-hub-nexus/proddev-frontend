@@ -5,6 +5,8 @@ import { useCourseStore } from "../store/useCourseStore";
 import { Course } from "../types";
 import { useApiQuery } from "@/general/hooks/use-api-query";
 import { useApiMutation } from "@/general/hooks/use-api-mutations";
+import { EnrolledCourse } from "../store/useEnrolledCourseStore";
+import axios from "axios";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -149,6 +151,13 @@ export function useCourseActions() {
     onError: () => setError("Failed to delete course"),
   });
 
+  const getUserEnrolledCourses = async () => {
+    const { data } = await axios.get<EnrolledCourse[]>(
+      "/api/enrollment/getEnrolledCourses"
+    );
+    return data;
+  };
+
   // --- Toggle Course Availability ---
   const toggleCourseAvailability = useCallback(
     (courseId: string) => {
@@ -166,6 +175,7 @@ export function useCourseActions() {
   return {
     // Queries
     fetchAllCourses: coursesQuery.refetch,
+    getUserEnrolledCourses: getUserEnrolledCourses,
 
     // Mutations
     createCourse: createCourseMutation.mutate,

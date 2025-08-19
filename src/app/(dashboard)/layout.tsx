@@ -3,6 +3,13 @@ import { Toaster } from "@/general/components/ui/sonner";
 import { QueryProvider } from "@/general/providers/QueryProvider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AuthProvider } from "@/general/providers/AuthProvider";
+
+import {
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/general/components/ui/sidebar";
+import DashboardSidebar from "./components/dashboard-sidebar";
+
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
@@ -20,9 +27,14 @@ export default function DashboardLayout({
       <body className="min-h-screen bg-gray-50">
         <QueryProvider>
           <AuthProvider>
-            {" "}
-            {/* ✅ Wrap protected routes */}
-            <main className="container mx-auto px-4 py-8">{children}</main>
+            <SidebarProvider>
+              <DashboardSidebar />
+              {/* ✅ Wrap protected routes */}
+              <main className="container">
+                <SidebarTrigger />
+                {children}
+              </main>
+            </SidebarProvider>
           </AuthProvider>
           <Toaster
             position="top-right"

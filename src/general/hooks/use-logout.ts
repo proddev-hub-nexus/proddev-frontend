@@ -1,3 +1,5 @@
+"use client";
+
 import { useAuthStore } from "../store/auth-store";
 import axios from "axios";
 

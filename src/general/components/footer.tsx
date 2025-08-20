@@ -139,8 +139,8 @@ const Footer = () => {
         <div className="mt-12 sm:mt-16 pt-8 border-t border-slate-700/50">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="text-xs sm:text-sm text-slate-400 text-center sm:text-left">
-              &copy; 2024 Proddev Hub. All rights reserved. Building careers
-              through education.
+              &copy; 2025 Proddev Hub Nexus Services. All rights reserved.
+              Building careers through education.
             </div>
 
             <div className="flex flex-wrap gap-4 sm:gap-6 text-xs text-slate-500">
@@ -157,7 +157,7 @@ const Footer = () => {
                 Terms
               </Link>
               <Link
-                href="/cookies"
+                href="/cookies-terms"
                 className="hover:text-slate-300 transition-colors duration-200"
               >
                 Cookies

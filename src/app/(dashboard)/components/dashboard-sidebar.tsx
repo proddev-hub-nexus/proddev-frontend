@@ -49,7 +49,7 @@ export default function DashboardSidebar() {
   const name = user?.full_name || "User";
 
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
       <SidebarHeader className="py-4 font-bold text-2xl">
         <Link href="/dashboard" className="hover:opacity-80">
           Proddev Hub

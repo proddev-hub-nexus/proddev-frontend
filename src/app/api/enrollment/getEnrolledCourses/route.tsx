@@ -2,7 +2,8 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const token = cookies().get("access_token")?.value;
+  const cookiesStore = await cookies();
+  const token = cookiesStore.get("access_token")?.value;
   if (!token) {
     return NextResponse.json(
       { error: "Unauthorized: no access token" },

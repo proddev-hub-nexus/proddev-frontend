@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Welcome to Proddev",
   description:
-    "An AI-assisted and live course platform created witht he passion for improvement and capacity",
+    "An AI-assisted and live course platform created with the passion for improvement and capacity",
 };
 
 export default function RootLayout({

@@ -31,7 +31,7 @@ export default function DashboardLayout({
               <DashboardSidebar />
               {/* ✅ Wrap protected routes */}
               <main className="container">
-                <SidebarTrigger size={"default"} variant={"default"} />
+                <SidebarTrigger size={null} variant={"default"} />
                 {children}
               </main>
             </SidebarProvider>

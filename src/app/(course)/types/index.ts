@@ -11,3 +11,12 @@ export interface Course {
   language?: string;
   created_at: string;
 }
+
+export type EnrolledCourse = {
+  enrollment_id: string;
+  enrollment_status: "pending" | "paid" | "confirmed" | "cancelled";
+  badge?: string;
+  enrolled_at: string; // ISO
+  whatsapp_link?: string | null;
+  course: Course;
+};

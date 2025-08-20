@@ -5,7 +5,7 @@ import { useCourseStore } from "../store/useCourseStore";
 import { Course } from "../types";
 import { useApiQuery } from "@/general/hooks/use-api-query";
 import { useApiMutation } from "@/general/hooks/use-api-mutations";
-import { EnrolledCourse } from "../store/useEnrolledCourseStore";
+import { EnrolledCourse } from "../types";
 import axios from "axios";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";

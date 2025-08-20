@@ -28,6 +28,7 @@ import DashboardAccount from "./dashboard-modals/dashboard-account";
 import { confirmLogout } from "./confirm-logout";
 import { useLogout } from "@/general/hooks/use-logout";
 import { useAuthStore } from "@/general/store/auth-store";
+import { DashboardLogo } from "./dashboard-logo";
 
 const items = [
   { title: "Home", url: "/dashboard", icon: Home },
@@ -49,11 +50,9 @@ export default function DashboardSidebar() {
   const name = user?.full_name || "User";
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible={`icon`}>
       <SidebarHeader className="py-4 font-bold text-2xl">
-        <Link href="/dashboard" className="hover:opacity-80">
-          Proddev Hub
-        </Link>
+        <DashboardLogo />
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>

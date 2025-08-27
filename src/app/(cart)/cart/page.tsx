@@ -1,23 +1,32 @@
 import CartItems from "../component/cart-items";
 import type { CartData, CartResponse } from "../types/cart";
-import { cookies } from "next/headers";
+import { headers, cookies } from "next/headers";
 
 export default async function CartPage() {
+  const h = await headers();
+  const proto = h.get("x-forwarded-proto") ?? "http";
+  const host = h.get("x-forwarded-host") ?? h.get("host");
+  const baseURL = `${proto}://${host}`;
+
   const cookiesStore = await cookies();
+
   const isAuthenticated = !!cookiesStore.get("access_token")?.value;
 
   let cart: CartData | null = null;
   let error: string | null = null;
 
   try {
-    const res = await fetch(`/api/cart/get-all-cart-items`, {
+    const res = await fetch(`${baseURL}/api/order/cart`, {
       method: "GET",
+      headers: { cookie: cookiesStore.toString() }, // forward request cookies
       cache: "no-store",
     });
 
     if (res.ok) {
-      const data: CartResponse = await res.json();
-      cart = data?.cart ?? null;
+      const data: CartResponse | any = await res.json();
+      cart = (data?.cart ?? data ?? null) as CartData | null; // supports {cart: ...} or bare object
+    } else if (res.status === 401) {
+      cart = null; // not logged in
     } else {
       error = `Failed to load cart (${res.status})`;
     }

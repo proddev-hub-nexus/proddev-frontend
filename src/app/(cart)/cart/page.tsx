@@ -1,6 +1,6 @@
 import CartItems from "../component/cart-items";
 import type { CartData, CartResponse } from "../types/cart";
-import { headers, cookies } from "next/headers";
+import { cookies } from "next/headers";
 
 export default async function CartPage() {
   const cookiesStore = await cookies();
@@ -10,14 +10,9 @@ export default async function CartPage() {
   let error: string | null = null;
 
   try {
-    const h = await headers();
-    const proto = h.get("x-forwarded-proto") ?? "http";
-    const host = h.get("x-forwarded-host") ?? h.get("host");
-    const baseURL = `${proto}://${host}`;
-
-    const res = await fetch(`${baseURL}/api/cart/get-all-cart-items`, {
+    const res = await fetch(`/api/cart/get-all-cart-items`, {
       method: "GET",
-      headers: { cookie: cookies().toString() }, // forward cookie to API route
+      headers: { cookie: cookies().toString() },
       cache: "no-store",
     });
 

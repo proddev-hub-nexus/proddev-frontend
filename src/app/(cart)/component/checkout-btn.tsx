@@ -17,10 +17,10 @@ function CheckoutButton() {
         // ✅ create popup here (only in browser, after init)
         const popup = new PaystackPop();
 
-        popup.resumeTransaction(res.data.access_code);
+        //popup.resumeTransaction(res.data.access_code);
 
         // OR if you want full redirect instead of popup
-        // router.replace(res.data.authorization_url);
+        router.replace(res.data.authorization_url);
       } else {
         toast.error("Payment initialization failed");
       }

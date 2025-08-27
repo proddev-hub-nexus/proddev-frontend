@@ -1,6 +1,9 @@
+"use client";
+
 import { initialisePayment } from "../utils/cart";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import PaystackPop from "@paystack/inline-js";
 
 function CheckoutButton() {
   const router = useRouter();
@@ -10,9 +13,14 @@ function CheckoutButton() {
       const res = await initialisePayment();
       console.log(res);
 
-      if (res.data?.authorization_url) {
-        // Redirect user to Paystack checkout
-        router.replace(res.data.authorization_url);
+      if (res.data?.authorization_url && res.data?.access_code) {
+        // ✅ create popup here (only in browser, after init)
+        const popup = new PaystackPop();
+
+        popup.resumeTransaction(res.data.access_code);
+
+        // OR if you want full redirect instead of popup
+        // router.replace(res.data.authorization_url);
       } else {
         toast.error("Payment initialization failed");
       }

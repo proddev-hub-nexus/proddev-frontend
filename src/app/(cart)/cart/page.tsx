@@ -3,11 +3,13 @@ import type { CartData, CartResponse } from "../types/cart";
 import { headers, cookies } from "next/headers";
 
 export default async function CartPage() {
+  const cookiesStore = await cookies();
+  const isAuthenticated = !!cookiesStore.get("access_token")?.value;
+
   let cart: CartData | null = null;
   let error: string | null = null;
 
   try {
-    // Build absolute URL for the current deployment (works locally and on Vercel/Heroku/etc.)
     const h = await headers();
     const proto = h.get("x-forwarded-proto") ?? "http";
     const host = h.get("x-forwarded-host") ?? h.get("host");
@@ -15,9 +17,8 @@ export default async function CartPage() {
 
     const res = await fetch(`${baseURL}/api/cart/get-all-cart-items`, {
       method: "GET",
-      // Forward cookies so the API route can read `access_token`
-      headers: { cookie: cookies().toString() },
-      cache: "no-store", // cart should be fresh; switch to revalidate if you want
+      headers: { cookie: cookies().toString() }, // forward cookie to API route
+      cache: "no-store",
     });
 
     if (res.ok) {
@@ -26,8 +27,7 @@ export default async function CartPage() {
     } else {
       error = `Failed to load cart (${res.status})`;
     }
-  } catch (e) {
-    console.error(e);
+  } catch {
     error = "Unable to connect to cart service";
   }
 
@@ -38,14 +38,9 @@ export default async function CartPage() {
       {error ? (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
           <p>Error loading cart: {error}</p>
-          <p className="text-sm mt-1">Please try refreshing the page.</p>
         </div>
-      ) : cart ? (
-        <CartItems cart={cart} />
       ) : (
-        <div className="text-center py-8">
-          <p className="text-gray-500">Your cart is empty</p>
-        </div>
+        <CartItems cart={cart} isAuthenticated={isAuthenticated} />
       )}
     </div>
   );

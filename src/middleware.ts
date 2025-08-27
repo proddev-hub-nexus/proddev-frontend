@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const AUTH_ROUTES = ["/account"];
-const PRIVATE_ROUTES = ["/dashboard", "/profile", "/cart", "/settings"];
+const PRIVATE_ROUTES = ["/dashboard", "/profile", "/settings"];
 
 export default async function middleware(req: NextRequest) {
   const token = req.cookies.get("access_token")?.value;

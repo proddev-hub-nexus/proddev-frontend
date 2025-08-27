@@ -3,9 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    // Parse body safely
     const { email, password } = await req.json().catch(() => ({}) as any);
-
     if (!email || !password) {
       return NextResponse.json(
         { success: false, message: "Email and password are required." },
@@ -13,7 +11,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Call your backend
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -21,9 +18,7 @@ export async function POST(req: Request) {
       cache: "no-store",
     });
 
-    // Try to read JSON even on non-2xx
     const data = await res.json().catch(() => null);
-
     if (!res.ok) {
       const message = data?.detail || data?.message || "Login failed.";
       return NextResponse.json(
@@ -40,24 +35,26 @@ export async function POST(req: Request) {
       );
     }
 
-    // Set cookie (cookies() is sync in route handlers)
-    const cookieStore = await cookies();
+    // Set HttpOnly cookie
+    const cookieStore = await cookies(); // no await
     cookieStore.set("access_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 60 * 60, // 1 hour
+      maxAge: 60 * 60,
       path: "/",
     });
 
-    // Return what you need (e.g., user info); avoid echoing the token
+    // 🔧 Return in the exact shape your client expects: { data: {...} }
     return NextResponse.json({
-      success: true,
-      user: data?.user ?? null,
-      message: "Login successful.",
+      data: {
+        token_id: data?.token_id ?? null,
+        access_token: data?.access_token ?? null, // if you prefer not to expose this, see Option B
+        device: data?.device ?? "desktop",
+        token_expires_in: data?.token_expires_in ?? null,
+      },
     });
   } catch (err) {
-    // Optional: log err for debugging
     console.error(err);
     return NextResponse.json(
       { success: false, message: "Internal server error." },

@@ -1,7 +1,10 @@
 "use client";
 
 import type { CartData, OrderStatus } from "../types/cart";
+import { removeItemFromCart, clearCart } from "../utils/cart";
 import Link from "next/link";
+import { useState } from "react";
+import { toast } from "sonner";
 
 type TCartItemsProp = {
   cart: CartData | null;
@@ -14,7 +17,7 @@ const formatNaira = (amount: number | null | undefined) => {
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
     currency: "NGN",
-    minimumFractionDigits: 0, // optional: remove decimals like .00
+    minimumFractionDigits: 0,
   }).format(amount);
 };
 
@@ -51,6 +54,9 @@ export default function CartItems({
   isAuthenticated,
   isLoading = false,
 }: TCartItemsProp) {
+  const [removing, setRemoving] = useState<string | null>(null);
+  const [clearing, setClearing] = useState(false);
+
   if (!isAuthenticated) {
     return (
       <div className="max-w-3xl mx-auto p-4">
@@ -81,8 +87,32 @@ export default function CartItems({
   const { order, items } = cart;
   const hasDiscount = order.discount_total > 0;
 
-  console.log(order);
-  console.log(items);
+  async function handleRemove(itemId: string) {
+    try {
+      setRemoving(itemId);
+      await removeItemFromCart(itemId);
+      toast.success("Item removed from cart");
+      // Refresh page/cart after removal
+      window.location.reload();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to remove item");
+    } finally {
+      setRemoving(null);
+    }
+  }
+
+  async function handleClear() {
+    try {
+      setClearing(true);
+      await clearCart();
+      toast.success("Cart cleared");
+      window.location.reload();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to clear cart");
+    } finally {
+      setClearing(false);
+    }
+  }
 
   return (
     <div className="max-w-3xl mx-auto p-4 space-y-6">
@@ -125,6 +155,16 @@ export default function CartItems({
             </div>
           </div>
         </div>
+
+        {items.length > 0 && (
+          <button
+            onClick={handleClear}
+            disabled={clearing}
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+          >
+            {clearing ? "Clearing…" : "Clear Cart"}
+          </button>
+        )}
       </section>
 
       {/* Items */}
@@ -145,35 +185,42 @@ export default function CartItems({
             {items.map((it) => (
               <div
                 key={it.item_id}
-                className="border border-gray-200 rounded-xl p-4"
+                className="border border-gray-200 rounded-xl p-4 flex justify-between items-center"
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h4 className="font-medium text-gray-900 mb-1">
-                      {it.course?.name ?? "Untitled course"}
-                    </h4>
-                    <div className="text-sm text-gray-500 space-y-1">
-                      <div className="flex flex-wrap gap-4">
-                        <span>Quantity: {it.quantity}</span>
-                        <span>
-                          Unit Price: {formatNaira(it.unit_price_snapshot)}
-                        </span>
-                      </div>
-                      {it.course?.category && (
-                        <div className="text-xs text-gray-400">
-                          Category: {it.course.category}
-                        </div>
-                      )}
-                      {it.course?.tutor && (
-                        <div className="text-xs text-gray-400">
-                          Instructor: {it.course.tutor}
-                        </div>
-                      )}
+                <div>
+                  <h4 className="font-medium text-gray-900 mb-1">
+                    {it.course?.name ?? "Untitled course"}
+                  </h4>
+                  <div className="text-sm text-gray-500 space-y-1">
+                    <div className="flex flex-wrap gap-4">
+                      <span>Quantity: {it.quantity}</span>
+                      <span>
+                        Unit Price: {formatNaira(it.unit_price_snapshot)}
+                      </span>
                     </div>
+                    {it.course?.category && (
+                      <div className="text-xs text-gray-400">
+                        Category: {it.course.category}
+                      </div>
+                    )}
+                    {it.course?.tutor && (
+                      <div className="text-xs text-gray-400">
+                        Instructor: {it.course.tutor}
+                      </div>
+                    )}
                   </div>
-                  <div className="text-right ml-4 font-semibold">
+                </div>
+                <div className="text-right">
+                  <div className="font-semibold mb-2">
                     {formatNaira(it.line_total)}
                   </div>
+                  <button
+                    onClick={() => handleRemove(it.item_id)}
+                    disabled={removing === it.item_id}
+                    className="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 disabled:opacity-50"
+                  >
+                    {removing === it.item_id ? "Removing…" : "Remove"}
+                  </button>
                 </div>
               </div>
             ))}

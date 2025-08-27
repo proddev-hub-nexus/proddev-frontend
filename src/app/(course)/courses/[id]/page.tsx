@@ -202,9 +202,11 @@ export default function CourseDetails() {
       setAdding(true);
       const res = await addItemToCart(currentCourse._id);
 
+      console.log(res);
+
       // success toast with quick "Go to cart" action
       toast.success("Added to cart 🎉", {
-        description: `Item total: ₦${(res.line_total / 100).toLocaleString()}`,
+        description: `Item total: ₦${res.line_total.toLocaleString()}`,
         action: {
           label: "Go to Cart",
           onClick: () => window.location.assign("/cart"),

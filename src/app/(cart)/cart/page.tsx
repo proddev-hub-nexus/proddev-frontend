@@ -12,7 +12,6 @@ export default async function CartPage() {
   try {
     const res = await fetch(`/api/cart/get-all-cart-items`, {
       method: "GET",
-      headers: { cookie: cookies().toString() },
       cache: "no-store",
     });
 

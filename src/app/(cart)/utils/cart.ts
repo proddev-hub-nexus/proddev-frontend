@@ -9,6 +9,18 @@ export type AddToCartResponse = {
   line_total: number;
 };
 
+export type InitPaymentResponse = {
+  success: boolean;
+  message: string;
+  data?: {
+    authorization_url: string;
+    access_code: string;
+    reference: string;
+    amount: number;
+  };
+  order_id?: string;
+};
+
 export async function addItemToCart(
   courseId: string
 ): Promise<AddToCartResponse> {
@@ -69,6 +81,25 @@ export async function clearCart(): Promise<{
     return data;
   } catch (err: any) {
     console.error("Clear cart failed:", err);
+    throw err;
+  }
+}
+
+export async function initialisePayment(): Promise<InitPaymentResponse> {
+  try {
+    const { data } = await axios.post<InitPaymentResponse>(
+      "/api/cart/init-payment",
+      {},
+      { validateStatus: () => true }
+    );
+
+    if (!data || data.success === false) {
+      throw new Error(data?.message || "Failed to initialise payment");
+    }
+
+    return data;
+  } catch (err: any) {
+    console.error("Initialise payment failed:", err);
     throw err;
   }
 }

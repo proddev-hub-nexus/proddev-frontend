@@ -2,6 +2,7 @@
 
 import type { CartData, OrderStatus } from "../types/cart";
 import { removeItemFromCart, clearCart } from "../utils/cart";
+import CheckoutButton from "./checkout-btn";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -85,7 +86,7 @@ export default function CartItems({
   }
 
   const { order, items } = cart;
-  const hasDiscount = order.discount_total > 0;
+  const hasDiscount = order?.discount_total > 0;
 
   async function handleRemove(itemId: string) {
     try {
@@ -124,46 +125,48 @@ export default function CartItems({
         <div className="space-y-3 text-gray-900 ">
           <div className="flex justify-between">
             <span>Order ID:</span>
-            <span className="font-mono text-sm">{order.id}</span>
+            <span className="font-mono text-sm">{order?.id}</span>
           </div>
           <div className="flex justify-between">
             <span>Status:</span>
-            <StatusBadge status={order.status} />
+            <StatusBadge status={order?.status} />
           </div>
           <div className="border-t pt-3 space-y-2">
             <div className="flex justify-between">
               <span>Subtotal:</span>
-              <span>{formatNaira(order.subtotal)}</span>
+              <span>{formatNaira(order?.subtotal)}</span>
             </div>
             {hasDiscount && (
               <div className="flex justify-between text-green-600">
                 <span>Discount:</span>
-                <span>-{formatNaira(order.discount_total)}</span>
+                <span>-{formatNaira(order?.discount_total)}</span>
               </div>
             )}
-            {order.tax_total > 0 && (
+            {order?.tax_total > 0 && (
               <div className="flex justify-between">
                 <span>Tax:</span>
-                <span>{formatNaira(order.tax_total)}</span>
+                <span>{formatNaira(order?.tax_total)}</span>
               </div>
             )}
             <div className="border-t pt-2 flex justify-between">
               <span className="text-lg font-semibold">Total:</span>
               <span className="text-lg font-bold">
-                {formatNaira(order.total)}
+                {formatNaira(order?.total)}
               </span>
             </div>
           </div>
         </div>
-
         {items.length > 0 && (
-          <button
-            onClick={handleClear}
-            disabled={clearing}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
-          >
-            {clearing ? "Clearing…" : "Clear Cart"}
-          </button>
+          <div className="mt-6 flex gap-3">
+            <button
+              onClick={handleClear}
+              disabled={clearing}
+              className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+            >
+              {clearing ? "Clearing…" : "Clear Cart"}
+            </button>
+            <CheckoutButton />
+          </div>
         )}
       </section>
 

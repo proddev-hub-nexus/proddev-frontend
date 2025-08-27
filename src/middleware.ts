@@ -10,7 +10,7 @@ export default async function middleware(req: NextRequest) {
 
   // If user has token and tries to access auth routes, redirect to dashboard
   if (token && AUTH_ROUTES.some((path) => pathname.startsWith(path))) {
-    url.pathname = "/dashboard";
+    url.pathname = "/";
     return NextResponse.redirect(url);
   }
 

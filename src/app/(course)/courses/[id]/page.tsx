@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { enrollNow } from "../../util/course-api";
-
+import { addItemToCart } from "@/app/(cart)/utils/cart";
 import { useParams } from "next/navigation";
 import { useCourseStore } from "../../store/useCourseStore";
 import { useCourseActions, useCourseById } from "../../hooks/useCourseActions";
@@ -90,7 +90,7 @@ export default function CourseDetails() {
   const params = useParams();
   const courseId = params?.id as string;
   const [enrolling, setEnrolling] = useState(false);
-
+  const [adding, setAdding] = useState(false);
   // Use the course hooks
   const { fetchAllCourses } = useCourseActions();
   const {
@@ -197,6 +197,38 @@ export default function CourseDetails() {
   const courseStats = generateCourseStats(currentCourse._id);
   const relatedCourses = getRelatedCourses();
 
+  const handleAddToCart = async () => {
+    try {
+      setAdding(true);
+      const res = await addItemToCart(currentCourse._id);
+
+      // success toast with quick "Go to cart" action
+      toast.success("Added to cart 🎉", {
+        description: `Item total: ₦${(res.line_total / 100).toLocaleString()}`,
+        action: {
+          label: "Go to Cart",
+          onClick: () => window.location.assign("/cart"),
+        },
+      });
+    } catch (err: any) {
+      const status = err?.status;
+
+      if (status === 401) {
+        toast.error("Please sign in to add items to your cart.");
+        // optional: redirect
+        // router.push("/auth/login");
+      } else if (status === 409) {
+        toast.info("This course is already in your cart.");
+      } else {
+        toast.error(
+          err?.data?.message || "Could not add item. Please try again."
+        );
+      }
+    } finally {
+      setAdding(false);
+    }
+  };
+
   const handleEnroll = async () => {
     try {
       setEnrolling(true);
@@ -210,7 +242,6 @@ export default function CourseDetails() {
           onClick: () => window.open(res.whatsapp_link, "_blank", "noopener"),
         },
       });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       const status = err?.response?.status;
       const detail = err?.response?.data?.detail;
@@ -319,12 +350,12 @@ export default function CourseDetails() {
                       </div>
                       <Button
                         size="lg"
-                        onClick={handleEnroll}
-                        disabled={enrolling}
+                        onClick={handleAddToCart}
+                        disabled={adding || currentCourse.available === false}
                         className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl py-4 font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-blue-500/20 disabled:opacity-60"
                       >
                         <PlayCircle className="w-5 h-5 mr-2" />
-                        {enrolling ? "Enrolling..." : "Enroll Now"}
+                        {adding ? "Adding..." : "Add to Cart"}
                       </Button>
 
                       <div className="space-y-4 pt-4 border-t border-slate-600/30">

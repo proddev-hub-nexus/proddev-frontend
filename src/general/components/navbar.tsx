@@ -42,6 +42,15 @@ export default function NavBar() {
                 <span className="absolute -bottom-1 left-3 w-0 h-0.5 bg-slate-200 transition-all duration-200 group-hover:w-[calc(100%-24px)]"></span>
               </Link>
             </li>
+            <li>
+              <Link
+                href="/cart"
+                className="text-slate-300 hover:text-slate-100 font-medium transition-colors duration-200 relative group px-3 py-2 rounded-lg hover:bg-slate-800/50"
+              >
+                Cart
+                <span className="absolute -bottom-1 left-3 w-0 h-0.5 bg-slate-200 transition-all duration-200 group-hover:w-[calc(100%-24px)]"></span>
+              </Link>
+            </li>
           </ul>
           <Link
             className="bg-slate-700 hover:bg-slate-600 text-slate-100 hover:text-white px-4 sm:px-6 py-2 rounded-lg font-medium shadow-sm hover:shadow-md transition-all duration-200 border border-slate-600 hover:border-slate-500"
@@ -96,6 +105,14 @@ export default function NavBar() {
                     className="text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 font-medium transition-all duration-200 relative group text-base sm:text-lg py-3 px-3 rounded-lg"
                   >
                     Courses
+                    <span className="absolute -bottom-1 left-3 w-0 h-0.5 bg-slate-200 transition-all duration-200 group-hover:w-[calc(100%-24px)]"></span>
+                  </Link>
+                  <Link
+                    href="/cart"
+                    onClick={closeSheet}
+                    className="text-slate-300 hover:text-slate-100 hover:bg-slate-800/50 font-medium transition-all duration-200 relative group text-base sm:text-lg py-3 px-3 rounded-lg"
+                  >
+                    Cart
                     <span className="absolute -bottom-1 left-3 w-0 h-0.5 bg-slate-200 transition-all duration-200 group-hover:w-[calc(100%-24px)]"></span>
                   </Link>
                 </nav>

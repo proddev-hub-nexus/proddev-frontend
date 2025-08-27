@@ -1,37 +1,34 @@
 import CartItems from "../component/cart-items";
 import type { CartData, CartResponse } from "../types/cart";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+import { headers, cookies } from "next/headers";
 
 export default async function CartPage() {
   let cart: CartData | null = null;
   let error: string | null = null;
 
-  if (API_URL) {
-    try {
-      // Fix: Use complete URL for fetch
-      const res = await fetch(`/api/cart/get-all-cart-items`, {
-        // Add cache control for better performance
-        next: { revalidate: 60 }, // Revalidate every 60 seconds
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+  try {
+    // Build absolute URL for the current deployment (works locally and on Vercel/Heroku/etc.)
+    const h = await headers();
+    const proto = h.get("x-forwarded-proto") ?? "http";
+    const host = h.get("x-forwarded-host") ?? h.get("host");
+    const baseURL = `${proto}://${host}`;
 
-      if (res.ok) {
-        const data: CartResponse = await res.json();
-        cart = data?.cart ?? null;
-      } else {
-        console.error(`Failed to fetch cart: ${res.status} ${res.statusText}`);
-        error = `Failed to load cart (${res.status})`;
-      }
-    } catch (fetchError) {
-      console.error("Error fetching cart:", fetchError);
-      error = "Unable to connect to cart service";
+    const res = await fetch(`${baseURL}/api/cart/get-all-cart-items`, {
+      method: "GET",
+      // Forward cookies so the API route can read `access_token`
+      headers: { cookie: cookies().toString() },
+      cache: "no-store", // cart should be fresh; switch to revalidate if you want
+    });
+
+    if (res.ok) {
+      const data: CartResponse = await res.json();
+      cart = data?.cart ?? null;
+    } else {
+      error = `Failed to load cart (${res.status})`;
     }
-  } else {
-    console.warn("API_URL not configured");
-    error = "Configuration error";
+  } catch (e) {
+    console.error(e);
+    error = "Unable to connect to cart service";
   }
 
   return (

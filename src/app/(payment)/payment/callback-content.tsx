@@ -28,7 +28,7 @@ export default function CallbackContent() {
           setStatus("success");
           setMessage("Payment verified successfully!");
           // optionally: redirect after 3s
-          // setTimeout(() => router.push("/account"), 3000);
+          setTimeout(() => router.push("/courses"), 3000);
         } else {
           setStatus("failed");
           setMessage(data.message || "Payment verification failed.");

@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
-  const cookieStore = cookies();
+export async function POST() {
+  const cookieStore = await cookies();
   const token = cookieStore.get("access_token")?.value;
 
   if (!token) {
@@ -34,6 +34,7 @@ export async function POST(req: Request) {
       { status: res.status }
     );
   } catch (error) {
+    console.error(error);
     return NextResponse.json(
       { success: false, message: "Failed to initialise payment" },
       { status: 500 }

@@ -16,21 +16,30 @@ export default async function CartPage() {
   let error: string | null = null;
 
   try {
-    const res = await fetch(`${baseURL}/api/order/cart`, {
+    const res = await fetch(`${baseURL}/api/cart/get-all-cart-items`, {
       method: "GET",
-      headers: { cookie: cookiesStore.toString() }, // forward request cookies
+      headers: { cookie: cookiesStore.toString() },
       cache: "no-store",
     });
+    console.log("[v0] API Response status:", res.status);
+    console.log(
+      "[v0] API Response headers:",
+      Object.fromEntries(res.headers.entries())
+    );
 
     if (res.ok) {
       const data: CartResponse | any = await res.json();
-      cart = (data?.cart ?? data ?? null) as CartData | null; // supports {cart: ...} or bare object
+      console.log("[v0] Raw API response data:", data);
+      console.log("[v0] Data keys:", Object.keys(data));
+      cart = (data?.cart ?? data ?? null) as CartData | null;
+      console.log("[v0] Processed cart data:", cart);
     } else if (res.status === 401) {
       cart = null; // not logged in
     } else {
       error = `Failed to load cart (${res.status})`;
     }
-  } catch {
+  } catch (err) {
+    console.log("[v0] Fetch error:", err);
     error = "Unable to connect to cart service";
   }
 

@@ -64,7 +64,7 @@ export function SignInForm() {
         password: values.password,
       });
 
-      const loginData = data?.data;
+      const loginData = data;
       if (!loginData) throw new Error("Login failed. Please try again.");
 
       setAuth({

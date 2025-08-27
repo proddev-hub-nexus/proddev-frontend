@@ -9,12 +9,13 @@ type TCartItemsProp = {
   isLoading?: boolean;
 };
 
-const formatNaira = (kobo: number | null | undefined) => {
-  if (typeof kobo !== "number") return "—";
+const formatNaira = (amount: number | null | undefined) => {
+  if (typeof amount !== "number") return "—";
   return new Intl.NumberFormat("en-NG", {
     style: "currency",
     currency: "NGN",
-  }).format(kobo / 100);
+    minimumFractionDigits: 0, // optional: remove decimals like .00
+  }).format(amount);
 };
 
 const StatusBadge = ({ status }: { status: OrderStatus }) => {
@@ -80,6 +81,9 @@ export default function CartItems({
   const { order, items } = cart;
   const hasDiscount = order.discount_total > 0;
 
+  console.log(order);
+  console.log(items);
+
   return (
     <div className="max-w-3xl mx-auto p-4 space-y-6">
       {/* Order Summary */}
@@ -87,7 +91,7 @@ export default function CartItems({
         <h2 className="text-xl font-semibold mb-4 text-gray-900">
           Order Summary
         </h2>
-        <div className="space-y-3">
+        <div className="space-y-3 text-gray-900 ">
           <div className="flex justify-between">
             <span>Order ID:</span>
             <span className="font-mono text-sm">{order.id}</span>

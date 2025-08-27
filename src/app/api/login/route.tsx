@@ -45,15 +45,7 @@ export async function POST(req: Request) {
       path: "/",
     });
 
-    // 🔧 Return in the exact shape your client expects: { data: {...} }
-    return NextResponse.json({
-      data: {
-        token_id: data?.token_id ?? null,
-        access_token: data?.access_token ?? null, // if you prefer not to expose this, see Option B
-        device: data?.device ?? "desktop",
-        token_expires_in: data?.token_expires_in ?? null,
-      },
-    });
+    return NextResponse.json(data);
   } catch (err) {
     console.error(err);
     return NextResponse.json(

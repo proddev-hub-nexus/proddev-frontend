@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useCartStore } from "@/app/(cart)/store/useCartStore";
 
 export default function CallbackContent() {
   const searchParams = useSearchParams();
@@ -27,7 +28,7 @@ export default function CallbackContent() {
         if (res.ok && data.success) {
           setStatus("success");
           setMessage("Payment verified successfully!");
-          // optionally: redirect after 3s
+          useCartStore.getState().clearCart(); // ✅ mark cart as cleared
           setTimeout(() => router.push("/courses"), 3000);
         } else {
           setStatus("failed");

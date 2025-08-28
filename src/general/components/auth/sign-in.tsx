@@ -53,7 +53,7 @@ export function SignInForm() {
   async function onSubmit(values: z.infer<typeof signInSchema>) {
     const id = toast.loading("Signing you in…", {
       description: "Please wait",
-      duration: Infinity, // persistent until we update/dismiss
+      duration: Infinity,
     });
 
     try {
@@ -74,24 +74,37 @@ export function SignInForm() {
         token_expires_in: new Date(loginData.token_expires_in),
       });
 
-      // IMPORTANT: you referenced selectedDate/selectedTime here earlier — remove that.
-      toast.success(isOnboarding ? "Welcome back!" : "Login successful!", {
-        id, // update the sticky one
-        duration: 8000, // now auto-dismiss in 6s (or keep Infinity if you want)
+      toast.success("Login successful!", {
+        id,
+        duration: 8000,
         action: { label: "Dismiss", onClick: () => toast.dismiss(id) },
       });
 
-      const redirectTo = searchParams?.get("redirect") || "/dashboard";
+      const redirectTo = searchParams?.get("redirect") || "/";
       router.push(redirectTo);
     } catch (err) {
-      const message = axios.isAxiosError(err)
-        ? err.response?.data?.detail ||
-          err.response?.data?.message ||
-          err.response?.data?.error
-        : "Unexpected error. Please try again.";
+      let message = "Unexpected error. Please try again.";
+
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+
+        if (status === 403) {
+          // special case for unverified users
+          message =
+            err.response?.data?.message ||
+            "Email not verified. A verification link has been resent.";
+        } else {
+          // fallback for other errors
+          message =
+            err.response?.data?.message ||
+            err.response?.data?.detail ||
+            err.response?.data?.error ||
+            "Login failed.";
+        }
+      }
 
       toast.error(message, {
-        id, // update the same toast
+        id,
         duration: 7000,
         action: {
           label: "Retry",

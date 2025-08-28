@@ -6,6 +6,7 @@ import CheckoutButton from "./checkout-btn";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useCartStore } from "../store/useCartStore";
 
 type TCartItemsProp = {
   cart: CartData | null;
@@ -55,8 +56,17 @@ export default function CartItems({
   isAuthenticated,
   isLoading = false,
 }: TCartItemsProp) {
+  const { isCartCleared } = useCartStore();
   const [removing, setRemoving] = useState<string | null>(null);
   const [clearing, setClearing] = useState(false);
+
+  if (isCartCleared) {
+    return (
+      <div className="max-w-3xl mx-auto p-4 text-center text-green-600 font-semibold">
+        🎉 Payment successful! Your cart has been cleared.
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return (

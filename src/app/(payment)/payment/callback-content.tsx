@@ -33,6 +33,7 @@ export default function CallbackContent() {
         } else {
           setStatus("failed");
           setMessage(data.message || "Payment verification failed.");
+          setTimeout(() => router.push("/cart"), 3000);
         }
       } catch (err: any) {
         setStatus("failed");

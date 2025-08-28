@@ -30,21 +30,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        // Always try to fetch profile - the API will handle token validation
         const profileData = await fetchProfile();
         if (profileData) {
           setUser(profileData);
-
-          // If user is authenticated and on login/home page, redirect to dashboard
           if (pathname === "/" || pathname === "/account") {
-            router.replace("/dashboard");
+            router.replace("/");
             return;
           }
         }
       } catch (err) {
         console.error("Failed to fetch profile:", err);
-
-        // If profile fetch fails (401 = no/invalid token), redirect to login for protected routes
         if (axios.isAxiosError(err) && err.response?.status === 401) {
           if (isProtectedRoute) {
             router.replace(`/account`);

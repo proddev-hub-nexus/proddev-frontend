@@ -5,7 +5,7 @@ import Link from "next/link";
 export function DashboardLogo() {
   return (
     <Link
-      href="/dashboard"
+      href="/"
       className="flex items-center gap-2 hover:opacity-90 transition"
       aria-label="Proddev Hub – Dashboard"
       title="Proddev Hub"

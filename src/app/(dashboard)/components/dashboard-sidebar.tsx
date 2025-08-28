@@ -33,7 +33,6 @@ import { DashboardLogo } from "./dashboard-logo";
 const items = [
   { title: "Home", url: "/dashboard", icon: Home },
   { title: "Inbox", url: "/dashboard-inbox", icon: Inbox },
-  { title: "Courses", url: "/dashboard-courses", icon: Calendar },
   {
     title: "Enrolled Courses",
     url: "dashboard-enrolled-courses",

@@ -7,7 +7,7 @@ export function DashboardLogo() {
     <Link
       href="/"
       className="flex items-center gap-2 hover:opacity-90 transition"
-      aria-label="Proddev Hub – Dashboard"
+      aria-label="Proddev Hub – Dashboard page"
       title="Proddev Hub"
     >
       {/* Brand mark */}

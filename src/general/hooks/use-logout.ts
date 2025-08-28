@@ -2,8 +2,10 @@
 
 import { useAuthStore } from "../store/auth-store";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export function useLogout() {
+  const router = useRouter();
   const { clearAuth } = useAuthStore();
 
   const logout = async (): Promise<void> => {
@@ -13,6 +15,8 @@ export function useLogout() {
 
       // Clear local auth state
       clearAuth();
+
+      router.push("/account");
     } catch (error) {
       console.error("Logout error:", error);
 

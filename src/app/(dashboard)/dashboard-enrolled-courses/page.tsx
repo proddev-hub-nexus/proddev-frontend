@@ -41,6 +41,15 @@ type EnrolledCourse = {
   course: Course;
 };
 
+const formatNaira = (amount: number | undefined) =>
+  typeof amount === "number"
+    ? new Intl.NumberFormat("en-NG", {
+        style: "currency",
+        currency: "NGN",
+        minimumFractionDigits: 0,
+      }).format(amount)
+    : "Free";
+
 async function fetchEnrolled(): Promise<EnrolledCourse[]> {
   const res = await fetch("/api/enrollment/getEnrolledCourses", {
     cache: "no-store",
@@ -220,9 +229,7 @@ export default function EnrolledPage() {
                   </div>
                   <div className="col-span-2">
                     <strong>Price:</strong>{" "}
-                    {typeof enrollment.course?.price === "number"
-                      ? `₦${enrollment.course.price.toLocaleString()}`
-                      : "Free"}
+                    {formatNaira(enrollment.course?.price)}
                   </div>
                 </div>
 

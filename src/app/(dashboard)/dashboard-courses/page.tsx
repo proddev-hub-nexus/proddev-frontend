@@ -24,6 +24,7 @@ import { useCourseActions } from "@/app/(course)/hooks/useCourseActions";
 import { useCourseStore } from "@/app/(course)/store/useCourseStore";
 // ⬇️ adjust path if different in your repo
 import { enrollNow } from "@/app/(course)/util/course-api";
+import CheckoutButton from "@/app/(cart)/component/checkout-btn";
 
 type EnrollResponse = {
   whatsapp_link?: string;
@@ -223,27 +224,7 @@ export default function DashboardCourses() {
 
                 {/* Actions */}
                 <div className="flex gap-2">
-                  <Button
-                    className="flex-1"
-                    size="sm"
-                    disabled={!canEnroll || isBusy}
-                    onClick={() => handleEnroll(course._id)}
-                  >
-                    {isBusy ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Enrolling…
-                      </>
-                    ) : (
-                      <>
-                        <PlusCircle className="w-4 h-4 mr-2" />
-                        {typeof course.price === "number"
-                          ? "Enroll Now"
-                          : "Enroll for Free"}
-                      </>
-                    )}
-                  </Button>
-
+                  <CheckoutButton />
                   <Button
                     asChild
                     variant="outline"
